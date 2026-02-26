@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>aro</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand" aria-label="aro brand">Aro</div>
+
+        <div class="topToolbar">
+          <button id="menuFile" class="topButton">File</button>
+          <div class="dropdown">
+            <button id="menuEdit" class="topButton">Edit</button>
+            <div id="editDropdown" class="dropdownContent" style="display: none;">
+              <button id="menuReset" class="dropdownItem">Reset</button>
+            </div>
+          </div>
+          <button id="menuSettings" class="topButton">Settings</button>
+          <button id="menuHelp" class="topButton">Help</button>
+          <button id="btnUndoTop" class="topButton">↺</button>
+        </div>
+
+        <div class="topTabs">
+          <button class="topTab active" data-tab="setup">SETUP</button>
+          <button class="topTab" data-tab="view">VIEW</button>
+          <button class="topTab" data-tab="export">EXPORT</button>
+        </div>
+
+        <div class="topCameraSettings">
+          <select id="frameFormat" class="cameraSelect">
+            <option>Full Frame</option>
+            <option>APS-C</option>
+            <option>Micro 4/3</option>
+          </select>
+          <span class="cameraDivider">×</span>
+          <input id="aperture" type="number" class="cameraInput" value="2.8" step="0.1" />
+          <span class="cameraDivider">•</span>
+          <input id="focalLength" type="number" class="cameraInput" value="85" />
+          <span class="cameraUnit">mm</span>
+          <span class="cameraDivider">•</span>
+          <input id="shutterSpeed" class="cameraInput" value="1/125" />
+          <span class="cameraUnit">s</span>
+          <span class="cameraDivider">•</span>
+          <select id="shutterType" class="cameraSelect">
+            <option>Normal</option>
+            <option>180° Shutter</option>
+          </select>
+          <span class="cameraDivider">•</span>
+          <input id="isoCamera" type="number" class="cameraInput" value="100" />
+          <span class="cameraDivider">•</span>
+          <input id="kelvin" type="number" class="cameraInput" value="5600" />
+          <span class="cameraUnit">K</span>
+          <button id="colorPicker" class="colorPickerBtn" style="background: white;"></button>
+        </div>
+
+        <div style="flex: 1;"></div>
+        <div id="authSection" class="authSection"></div>
+      </header>
+
+      <main class="layout">
+        <aside class="sidebar">
+          <div class="characterHeader">
+            <div class="characterAvatar">
+              <img id="avatarImg" src="" alt="Character" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+            </div>
+            <div class="characterInfo">
+              <div id="characterName" class="characterName">Mike</div>
+              <button class="poseSliderBtn">Pose Slider</button>
+              <div class="posingMode">POSING MODE</div>
+              <div class="poseModeButtons">
+                <button class="poseModeBtn">IK</button>
+                <button class="poseModeBtn">FK</button>
+                <button class="poseModeBtn">≡</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="characterTabs">
+            <button class="characterTab active" data-tab="style">STYLE</button>
+            <button class="characterTab" data-tab="pose">POSE</button>
+            <button class="characterTab" data-tab="bones">BONES</button>
+          </div>
+
+          <section class="panel" id="cloudButtons" style="display: none;">
+            <div class="panelTitle">☁️ Cloud Storage</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnSaveScene" class="btn btnPrimary">Save Scene</button>
+                <button id="btnLoadScene" class="btn btnSecondary">Load Scene</button>
+                <button id="btnSavePreset" class="btn btnPrimary">Save Lighting Preset</button>
+                <button id="btnLoadPreset" class="btn btnSecondary">Load Preset</button>
+              </div>
+              <div class="hint">Save and load your scenes and lighting presets.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Studio</div>
+            <div class="panelContent">
+              <div class="btnRowSingle">
+                <button id="btnUndo" class="btn btnSecondary">Undo</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">🎬 Projects</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnNewProject" class="btn btnPrimary">New Project</button>
+                <button id="btnLoadProject" class="btn btnSecondary">Load Project</button>
+                <button id="btnSaveProject" class="btn btnSecondary">Save Current</button>
+              </div>
+              <div class="hint">Organize multiple scenes into projects.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Classic Portrait Lighting</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnButterfly" class="btn btnPrimary">Butterfly Lighting</button>
+                <button id="btnLoop" class="btn btnPrimary">Loop Lighting</button>
+                <button id="btnRembrandt" class="btn btnPrimary">Rembrandt Lighting</button>
+                <button id="btnSplit" class="btn btnPrimary">Split Lighting</button>
+                <button id="btnBroad" class="btn btnPrimary">Broad Lighting</button>
+                <button id="btnShort" class="btn btnPrimary">Short Lighting</button>
+              </div>
+              <div class="hint">Click a preset to automatically set up that lighting style.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Special Effects</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnRim" class="btn btnPrimary">Rim/Edge Lighting</button>
+                <button id="btnHair" class="btn btnPrimary">Hair Light</button>
+                <button id="btnKicker" class="btn btnPrimary">Kicker</button>
+              </div>
+              <div class="hint">Accent and specialty lighting effects.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">📷 Equipment Library</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnCameras" class="btn btnSecondary">Cameras</button>
+                <button id="btnLenses" class="btn btnSecondary">Lenses</button>
+                <button id="btnModifiers" class="btn btnSecondary">Light Modifiers</button>
+                <button id="btnProps" class="btn btnSecondary">Props & Set Pieces</button>
+              </div>
+              <div class="hint">Access professional equipment library with 90+ items.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">🎭 Character Controls</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnModelTransform" class="btn btnPrimary">Model Transform</button>
+                <button id="btnPoses" class="btn btnSecondary">Poses Library</button>
+                <button id="btnAnimations" class="btn btnSecondary">Animations</button>
+                <button id="btnExpressions" class="btn btnSecondary">Facial Expressions</button>
+                <button id="btnCharacterCustomize" class="btn btnSecondary">Customize Character</button>
+              </div>
+              <div class="hint">Transform, pose, animate, and customize your models.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Lights</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnL1" class="btn btnPrimary">Long Rectangular Softbox</button>
+                <button id="btnL2" class="btn btnPrimary">Rectangular Softbox</button>
+                <button id="btnL3" class="btn btnPrimary">Square Softbox</button>
+                <button id="btnL5" class="btn btnPrimary">Small Round Light</button>
+              </div>
+              <div class="hint">Click a light icon in OVERHEAD to select, then drag to move.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Lighting Controls</div>
+            <div class="panelContent">
+              <div id="lightControls" class="lightControls">
+                <div class="hint">Add a light to generate controls.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">🌍 Environment</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnEnvironmentType" class="btn btnSecondary">Studio / Outdoor</button>
+                <button id="btnBackgrounds" class="btn btnSecondary">Backgrounds</button>
+                <button id="btnHDRI" class="btn btnSecondary">HDRI Environments</button>
+                <button id="btnSunPosition" class="btn btnSecondary">Sun Position</button>
+                <button id="btnFog" class="btn btnSecondary">Atmosphere & Fog</button>
+              </div>
+              <div class="hint">Control environment type, backgrounds, HDRI lighting, and atmospheric effects.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">Camera</div>
+            <div class="panelContent">
+              <div class="control">
+                <div id="isoVal" class="val">200</div>
+                <input id="iso" type="range" min="50" max="6400" step="10" value="200" />
+                <label>ISO</label>
+              </div>
+
+              <div class="control">
+                <div id="fstopVal" class="val">2.8</div>
+                <input id="fstop" type="range" min="1.4" max="16" step="0.1" value="2.8" />
+                <label>f-stop</label>
+              </div>
+
+              <div class="control">
+                <div id="shutterVal" class="val">1/125</div>
+                <input id="shutter" type="range" min="0.002" max="0.2" step="0.001" value="0.008" />
+                <label>Shutter</label>
+              </div>
+
+              <div class="control">
+                <div id="expCompVal" class="val">0.0</div>
+                <input id="expComp" type="range" min="-3" max="3" step="0.1" value="0" />
+                <label>Exp Comp</label>
+              </div>
+
+              <div class="row">
+                <label class="checkbox">
+                  <input id="maintainExposure" type="checkbox" />
+                  <span>Maintain exposure</span>
+                </label>
+              </div>
+
+              <div class="readouts">
+                <div class="readoutRow">
+                  <span class="readoutLabel">EV</span>
+                  <span id="evVal" class="readoutValue">—</span>
+                </div>
+                <div class="readoutRow">
+                  <span class="readoutLabel">Exposure</span>
+                  <span id="exposureVal" class="readoutValue">—</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">📹 Advanced Camera</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnCameraModels" class="btn btnSecondary">Camera Models</button>
+                <button id="btnLensSelection" class="btn btnSecondary">Lens Selection</button>
+                <button id="btnDOF" class="btn btnSecondary">Depth of Field</button>
+                <button id="btnCameraPosition" class="btn btnSecondary">Save Camera Position</button>
+              </div>
+              <div class="hint">Professional camera simulation with realistic optics.</div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panelTitle">📤 Export</div>
+            <div class="panelContent">
+              <div class="btnStack">
+                <button id="btnExportRender" class="btn btnPrimary">High-Quality Render</button>
+                <button id="btnExportBlueprint" class="btn btnSecondary">Lighting Blueprint</button>
+                <button id="btnExportDiagram" class="btn btnSecondary">Setup Diagram</button>
+                <button id="btnExportSpecs" class="btn btnSecondary">Equipment Specs</button>
+              </div>
+              <div class="hint">Export renders, diagrams, and technical documentation.</div>
+            </div>
+          </section>
+
+        </aside>
+
+        <section class="mainViewport">
+          <div class="viewportCanvas">
+            <canvas id="modelCanvas"></canvas>
+            <div class="viewportControls">
+              <button class="viewportBtn" title="Frame All">⌖</button>
+              <button class="viewportBtn" title="Pan">✥</button>
+              <button class="viewportBtn" title="Zoom">🔍</button>
+              <button class="viewportBtn" title="Settings">⚙</button>
+            </div>
+            <div class="versionTag">v2.0 Extended</div>
+          </div>
+        </section>
+
+        <aside class="rightPanel">
+          <div class="rightTabs">
+            <button class="rightTab active" data-panel="topview">TOPVIEW</button>
+            <button class="rightTab" data-panel="setlist">SETLIST</button>
+          </div>
+          <div class="rightContent">
+            <div id="topviewPanel" class="rightPanelContent active">
+              <canvas id="overheadCanvas"></canvas>
+            </div>
+            <div id="setlistPanel" class="rightPanelContent">
+              <div class="setlistItem">
+                <span class="setlistIcon">👤</span>
+                <span>Character 1</span>
+              </div>
+              <div class="setlistItem">
+                <span class="setlistIcon">💡</span>
+                <span>Key Light</span>
+              </div>
+              <div class="setlistItem">
+                <span class="setlistIcon">💡</span>
+                <span>Fill Light</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="bottomTimeline">
+        <div class="timelineControls">
+          <button class="timelineBtn">▶</button>
+          <button class="timelineBtn">◼</button>
+          <span class="timelineTime">-0:44</span>
+          <span class="timelineFrame">0:21:23</span>
+        </div>
+
+        <div class="equipmentTabs">
+          <button class="equipmentTab active" data-category="timeline">TIMELINE</button>
+          <button class="equipmentTab" data-category="video">VIDEO CREATION</button>
+          <button class="equipmentTab" data-category="models">MODELS</button>
+          <button class="equipmentTab" data-category="transform">TRANSFORM</button>
+          <button class="equipmentTab" data-category="character">CHARACTER CONTROLS</button>
+          <button class="equipmentTab" data-category="hair">HAIR</button>
+          <button class="equipmentTab" data-category="clothing">CLOTHING</button>
+          <button class="equipmentTab" data-category="monolight">SINGLE LIGHT</button>
+          <button class="equipmentTab" data-category="speedlight">PORTRAIT PRESETS</button>
+          <button class="equipmentTab" data-category="continuous">MULTI-LIGHT PRESETS</button>
+          <button class="equipmentTab" data-category="helper">LIGHTING CONTROLS</button>
+          <button class="equipmentTab" data-category="props">ENVIRONMENTS</button>
+          <button class="equipmentTab" data-category="animations">ANIMATIONS</button>
+        </div>
+
+        <div class="equipmentLibrary">
+          <div id="timelineLibrary" class="libraryContent active">
+            <div class="hint" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+              Timeline animation features coming soon
+            </div>
+          </div>
+
+          <div id="videoLibrary" class="libraryContent" style="display: none;">
+            <div class="btnStack" style="flex-direction: row; gap: 8px; padding: 16px;">
+              <button id="btnTimelineBottom" class="btn btnPrimary">Open Timeline</button>
+              <button id="btnKeyframeBottom" class="btn btnSecondary">Add Keyframe</button>
+              <button id="btnPlayAnimationBottom" class="btn btnSecondary">Play / Pause</button>
+            </div>
+          </div>
+
+          <div id="modelsLibrary" class="libraryContent" style="display: none;">
+            <!-- Models will be populated dynamically from database -->
+          </div>
+
+          <div id="transformLibrary" class="libraryContent" style="display: none;">
+            <div class="transformControl">
+              <label>Position X:</label>
+              <input type="number" step="0.1" value="12.16" class="transformInput" id="transformPosX">
+              <span class="transformUnit">ft</span>
+            </div>
+            <div class="transformControl">
+              <label>Position Y:</label>
+              <input type="number" step="0.1" value="7.91" class="transformInput" id="transformPosY">
+              <span class="transformUnit">ft</span>
+            </div>
+            <div class="transformControl">
+              <label>Height:</label>
+              <input type="number" step="0.1" value="0.00" class="transformInput" id="transformHeight">
+              <span class="transformUnit">ft</span>
+            </div>
+            <div class="transformControl">
+              <label>Pitch:</label>
+              <input type="number" step="0.1" value="0.00" class="transformInput" id="transformPitch">
+              <span class="transformUnit">°</span>
+            </div>
+            <div class="transformControl">
+              <label>Roll:</label>
+              <input type="number" step="0.1" value="0.00" class="transformInput" id="transformRoll">
+              <span class="transformUnit">°</span>
+            </div>
+            <div class="transformControl">
+              <label>Yaw:</label>
+              <input type="number" step="0.1" value="0.00" class="transformInput" id="transformYaw">
+              <span class="transformUnit">°</span>
+            </div>
+            <div class="transformControl">
+              <label>Size:</label>
+              <input type="number" step="0.1" value="6.17" class="transformInput" id="transformSize">
+              <span class="transformUnit">ft</span>
+            </div>
+          </div>
+
+          <div id="characterLibrary" class="libraryContent" style="display: none;">
+            <div class="btnStack" style="flex-direction: row; gap: 8px; padding: 16px;">
+              <button id="btnPosesBottom" class="btn btnPrimary">Poses Library</button>
+              <button id="btnExpressionsBottom" class="btn btnSecondary">Expressions</button>
+              <button id="btnCustomizeBottom" class="btn btnSecondary">Customize</button>
+              <button id="btnTransformBottom" class="btn btnSecondary">Transform</button>
+            </div>
+          </div>
+
+          <div id="hairLibrary" class="libraryContent" style="display: none;">
+            <div class="libraryItem" data-hair="style1">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👨</span>
+              </div>
+              <div class="libraryLabel">Style 1</div>
+            </div>
+            <div class="libraryItem" data-hair="style2">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👨‍🦱</span>
+              </div>
+              <div class="libraryLabel">Style 2</div>
+            </div>
+            <div class="libraryItem" data-hair="style3">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👨‍🦰</span>
+              </div>
+              <div class="libraryLabel">Style 3</div>
+            </div>
+            <div class="libraryItem" data-hair="style4">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👱‍♂️</span>
+              </div>
+              <div class="libraryLabel">Style 4</div>
+            </div>
+          </div>
+
+          <div id="clothingLibrary" class="libraryContent" style="display: none;">
+            <div class="libraryItem" data-clothing="formal">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👔</span>
+              </div>
+              <div class="libraryLabel">Formal</div>
+            </div>
+            <div class="libraryItem" data-clothing="casual">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👕</span>
+              </div>
+              <div class="libraryLabel">Casual</div>
+            </div>
+            <div class="libraryItem" data-clothing="dress">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">👗</span>
+              </div>
+              <div class="libraryLabel">Dress</div>
+            </div>
+            <div class="libraryItem" data-clothing="jacket">
+              <div class="libraryThumb">
+                <span style="font-size: 32px;">🧥</span>
+              </div>
+              <div class="libraryLabel">Jacket</div>
+            </div>
+          </div>
+
+          <div id="presetposesLibrary" class="libraryContent" style="display: none;">
+            <div class="poseCategory">
+              <div class="poseCategoryTitle">▼ Standing</div>
+              <div class="thumbnailGrid">
+                <div class="thumbnailItem">
+                  <div class="thumbnail">🧍</div>
+                  <div class="libraryLabel">Neutral</div>
+                </div>
+                <div class="thumbnailItem">
+                  <div class="thumbnail">🕴️</div>
+                  <div class="libraryLabel">Formal</div>
+                </div>
+                <div class="thumbnailItem">
+                  <div class="thumbnail">💪</div>
+                  <div class="libraryLabel">Power</div>
+                </div>
+                <div class="thumbnailItem">
+                  <div class="thumbnail">🙋</div>
+                  <div class="libraryLabel">Raised Hand</div>
+                </div>
+              </div>
+            </div>
+            <div class="poseCategory">
+              <div class="poseCategoryTitle">▼ Sitting</div>
+              <div class="thumbnailGrid">
+                <div class="thumbnailItem">
+                  <div class="thumbnail">🪑</div>
+                  <div class="libraryLabel">Chair</div>
+                </div>
+                <div class="thumbnailItem">
+                  <div class="thumbnail">🧘</div>
+                  <div class="libraryLabel">Meditation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="monolightLibrary" class="libraryContent" style="display: none;">
+            <div class="libraryItem" data-light="L1">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">▭</span>
+              </div>
+              <div class="libraryLabel">Long Rectangular<br>Softbox</div>
+            </div>
+            <div class="libraryItem" data-light="L2">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">▬</span>
+              </div>
+              <div class="libraryLabel">Rectangular<br>Softbox</div>
+            </div>
+            <div class="libraryItem" data-light="L3">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">▢</span>
+              </div>
+              <div class="libraryLabel">Square<br>Softbox</div>
+            </div>
+            <div class="libraryItem" data-light="L5">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">⬤</span>
+              </div>
+              <div class="libraryLabel">Small Round<br>Light</div>
+            </div>
+          </div>
+
+          <div id="speedlightLibrary" class="libraryContent" style="display: none;">
+            <div class="libraryItem" data-preset="butterfly">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">🦋</span>
+              </div>
+              <div class="libraryLabel">Butterfly<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="loop">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">➰</span>
+              </div>
+              <div class="libraryLabel">Loop<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="rembrandt">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">🎨</span>
+              </div>
+              <div class="libraryLabel">Rembrandt<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="split">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">◐</span>
+              </div>
+              <div class="libraryLabel">Split<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="broad">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">◱</span>
+              </div>
+              <div class="libraryLabel">Broad<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="short">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">◲</span>
+              </div>
+              <div class="libraryLabel">Short<br>Lighting</div>
+            </div>
+          </div>
+
+          <div id="continuousLibrary" class="libraryContent" style="display: none;">
+            <div class="libraryItem" data-preset="threepoint">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">◬</span>
+              </div>
+              <div class="libraryLabel">Three-Point<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="clamshell">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">◭</span>
+              </div>
+              <div class="libraryLabel">Clamshell<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="cross">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">✕</span>
+              </div>
+              <div class="libraryLabel">Cross<br>Lighting</div>
+            </div>
+            <div class="libraryItem" data-preset="highkey">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">☀</span>
+              </div>
+              <div class="libraryLabel">High<br>Key</div>
+            </div>
+            <div class="libraryItem" data-preset="lowkey">
+              <div class="libraryThumb">
+                <span style="font-size: 20px;">☾</span>
+              </div>
+              <div class="libraryLabel">Low<br>Key</div>
+            </div>
+          </div>
+
+          <div id="helperLibrary" class="libraryContent" style="display: none;">
+            <div class="hint" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+              Helper equipment (reflectors, flags, etc.) coming soon
+            </div>
+          </div>
+
+          <div id="propsLibrary" class="libraryContent" style="display: none;">
+            <!-- Props will be populated from database -->
+          </div>
+
+          <div id="animationsLibrary" class="libraryContent" style="display: none;">
+            <div class="hint" style="padding: 20px; text-align: center; color: var(--text-secondary);">
+              Animations library coming soon
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div id="authModal" class="modal" style="display: none;">
+      <div class="modalContent">
+        <div class="modalHeader">
+          <h2 id="authModalTitle">Sign In</h2>
+          <button class="closeBtn" id="closeAuthModal">&times;</button>
+        </div>
+        <div class="modalBody" id="authModalBody"></div>
+      </div>
+    </div>
+
+    <div id="cloudModal" class="modal" style="display: none;">
+      <div class="modalContent">
+        <div class="modalHeader">
+          <h2 id="cloudModalTitle">Cloud Storage</h2>
+          <button class="closeBtn" id="closeCloudModal">&times;</button>
+        </div>
+        <div class="modalBody" id="cloudModalBody"></div>
+      </div>
+    </div>
+
+    <div id="animationModal" class="modal" style="display: none;">
+      <div class="modalContent" style="max-width: 800px;">
+        <div class="modalHeader">
+          <h2>Animation Library</h2>
+          <button class="closeBtn" id="closeAnimationModal">&times;</button>
+        </div>
+        <div class="modalBody">
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <button id="filterPoses" class="btn btnSecondary">Poses</button>
+              <button id="filterActions" class="btn btnSecondary">Actions</button>
+              <button id="filterLoops" class="btn btnSecondary">Loops</button>
+              <button id="filterAll" class="btn btnPrimary">All</button>
+            </div>
+          </div>
+          <div id="animationGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; max-height: 400px; overflow-y: auto;"></div>
+          <div style="margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 4px;">
+            <h3 style="font-size: 14px; margin: 0 0 8px 0;">Animation Controls</h3>
+            <div class="control">
+              <label>Speed</label>
+              <input id="animSpeed" type="range" min="0.1" max="3" step="0.1" value="1" />
+              <div id="animSpeedVal" class="val">1.0x</div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button id="btnPlayAnimation" class="btn btnPrimary">Play</button>
+              <button id="btnPauseAnimation" class="btn btnSecondary">Pause</button>
+              <button id="btnStopAnimation" class="btn btnSecondary">Stop</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
